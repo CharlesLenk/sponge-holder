@@ -7,57 +7,43 @@ wall_thickness = 2.5;
 
 depth = sponge_1_depth + sponge_2_depth + 3 * wall_thickness;
 width = 94;
-corner_radius = 10;
 corner_r = 10;
 
 dish_lip_height = wall_thickness + 10;
-spong_holder_dish_h = dish_lip_height - 7;
+sponge_holder_dish_h = dish_lip_height - 7;
 sponge_lip_height = 70;
 
 bottom_corner_r = 1.5;
 
-adjusted_width = width - 2 * corner_radius;
-adjusted_depth = depth - 2 * corner_radius;
+adjusted_width = width - 2 * corner_r;
+adjusted_depth = depth - 2 * corner_r;
 
 divider_width = width - wall_thickness;
 
-total_h = spong_holder_dish_h + sponge_lip_height + corner_r;
+total_h = sponge_holder_dish_h + sponge_lip_height + corner_r;
 
-intersection() {
-    union() {
-        dish();
-        difference() {
-            holder();
-            cuts();
+union() {
+    dish();
+    difference() {
+        holder();
+        cuts();
+        penn();
+        rotate(180)
             penn();
-rotate(180) penn();
-        }
     }
-    //cube([100, 100, 30], center = true);
 }
-
-//cuts();
 
 penny_stack_d = 19.4;
 penny_stack_h = 9.4;
 
-
-
 module penn() {
-translate([5, -(adjusted_width - 20)/2 + penny_stack_d/2 + 8.5, 1])
-rotate([0, 0, 90])
-translate([0, 0, 0])
-row_layout(total_width = adjusted_width - 20, part_width = penny_stack_d, part_count = 2, mode = 0) {
-    cylinder(d = penny_stack_d, h = penny_stack_h);
+    translate([5, -(adjusted_width - 20)/2 + penny_stack_d/2 + 8.5, 1])
+    rotate([0, 0, 90])
+    translate([0, 0, 0])
+    row_layout(total_width = adjusted_width - 20, part_width = penny_stack_d, part_count = 2, mode = 0) {
+        cylinder(d = penny_stack_d, h = penny_stack_h);
+    }
 }
-}
-
-// translate([-6, -(adjusted_width - 30)/2 + penny_stack_d/2, 1.5])
-// rotate([0, 0, 90])
-// translate([0, 0, 10])
-// row_layout(total_width = adjusted_width - 30, part_width = penny_stack_d, part_count = 2, mode = 0) {
-//     cylinder(d = penny_stack_d, h = 5);
-// }
 
 module cuts() {
     cut_count = 5;
@@ -65,7 +51,6 @@ module cuts() {
     cut_distance = adjusted_width / cut_count;
     cut_vert_dist = 8;
     cut_len = 23;
-
 
     translate([0, 0, total_h - cut_vert_dist]) {
         rotate([270, 0, 90]) {
@@ -93,7 +78,7 @@ module cuts() {
 }
 
 module holder() {
-    translate([0, 0, spong_holder_dish_h]) {
+    translate([0, 0, sponge_holder_dish_h]) {
         reflect([1, 0, 0]) {
             translate([-corner_r + depth/2, adjusted_width/2]) {
                 rotate([90, 0, 0]) {
@@ -103,7 +88,7 @@ module holder() {
                 }
             }
             reflect([0, 1, 0]) {
-                translate([depth/2 - corner_radius, adjusted_width/2]) corner();
+                translate([depth/2 - corner_r, adjusted_width/2]) corner();
             }
         }
         reflect([0, 1, 0]) {
@@ -129,12 +114,51 @@ module holder() {
         }
     }
     translate([-adjusted_depth/2, -adjusted_width/2]) {
-        cube([adjusted_depth, adjusted_width, corner_r + 2 * bottom_corner_r + spong_holder_dish_h]);
+        cube([adjusted_depth, adjusted_width, corner_r + 2 * bottom_corner_r + sponge_holder_dish_h]);
     }
 }
 
 module corner() {
-    rotate_extrude(angle = 90) part();
+    rotate_extrude(angle = 90)
+        part();
+}
+
+module dish() {
+    reflect([1, 0, 0]) {
+        translate([0, adjusted_width/2]) {
+            rotate([90, 0, 0]) {
+                linear_extrude(adjusted_width) {
+                    dish_part();
+                }
+            }
+        }
+        reflect([0, 1, 0]) {
+            translate([depth/2 - corner_r, adjusted_width/2]) dish_corner();
+        }
+    }
+    reflect([0, 1, 0]) {
+        translate([-adjusted_depth/2, -depth/2 + width/2]) {
+            rotate([90, 0, 90]) {
+                linear_extrude(adjusted_depth) {
+                    dish_part();
+                }
+            }
+        }
+    }
+}
+
+module dish_corner() {
+    rotate_extrude(angle = 90) {
+        translate([-depth/2 + corner_r, 0]) dish_part();
+    }
+}
+
+dish_2d();
+
+module dish_2d() {
+    dish_part();
+    translate([0, sponge_holder_dish_h])
+        part();
 }
 
 module part() {
@@ -152,40 +176,10 @@ module part() {
     }
 }
 
-module dish() {
-    reflect([1, 0, 0]) {
-        translate([0, adjusted_width/2]) {
-            rotate([90, 0, 0]) {
-                linear_extrude(adjusted_width) {
-                    dish_part();
-                }
-            }
-        }
-        reflect([0, 1, 0]) {
-            translate([depth/2 - corner_radius, adjusted_width/2]) dish_corner();
-        }
-    }
-    reflect([0, 1, 0]) {
-        translate([-adjusted_depth/2, -depth/2 + width/2]) {
-            rotate([90, 0, 90]) {
-                linear_extrude(adjusted_depth) {
-                    dish_part();
-                }
-            }
-        }
-    }
-}
-
-module dish_corner() {
-    rotate_extrude(angle = 90) {
-        translate([-depth/2 + corner_radius, 0]) dish_part();
-    }
-}
-
 module dish_part() {
-    translate([depth/2 - corner_radius, 0]) {
+    translate([0, 0]) {
         intersection() {
-            translate([-depth/2 + corner_radius, 0]) {
+            translate([-depth/2 + corner_r, 0]) {
                 union() {
                     square([depth/2 - bottom_corner_r, wall_thickness]);
                     translate([depth/2 - bottom_corner_r, bottom_corner_r]) {
@@ -203,4 +197,3 @@ module dish_part() {
         }
     }
 }
-
