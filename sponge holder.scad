@@ -3,53 +3,42 @@ use <openscad-utilities/row layout.scad>
 
 sponge_1_depth = 24;
 sponge_2_depth = 20;
+sponge_width = 0;
+sponge_length = 0;
+
 wall_thickness = 2.5;
 
 depth = sponge_1_depth + sponge_2_depth + 3 * wall_thickness;
 width = 94;
-corner_r = 10;
-
-dish_lip_height = wall_thickness + 10;
-sponge_holder_dish_h = dish_lip_height - 7;
 sponge_lip_height = 70;
 
-bottom_corner_r = 1.5;
-
+corner_r = 10;
 adjusted_width = width - 2 * corner_r;
 adjusted_depth = depth - 2 * corner_r;
 
-divider_width = width - wall_thickness;
+dish_lip_height = wall_thickness + 10;
+sponge_holder_dish_h = dish_lip_height - 7;
+cut_bottom_h = dish_lip_height - 1;
+
+bottom_corner_r = 1.5;
 
 total_h = sponge_holder_dish_h + sponge_lip_height + corner_r;
 
-union() {
+bottom_void_height_offset = 1.5;
+
+sponge_holder();
+
+module sponge_holder() {
     dish();
     difference() {
         holder();
         cuts();
-        penn();
-        rotate(180)
-            penn();
-    }
-}
-
-penny_stack_d = 19.4;
-penny_stack_h = 9.4;
-
-module penn() {
-    translate([5, -(adjusted_width - 20)/2 + penny_stack_d/2 + 8.5, 1])
-    rotate([0, 0, 90])
-    translate([0, 0, 0])
-    row_layout(total_width = adjusted_width - 20, part_width = penny_stack_d, part_count = 2, mode = 0) {
-        cylinder(d = penny_stack_d, h = penny_stack_h);
     }
 }
 
 module cuts() {
-    cut_count = 5;
-    cut_width = 4;
-    cut_distance = adjusted_width / cut_count;
-    cut_vert_dist = 8;
+    cut_width = 5;
+    cut_vert_dist = 7;
     cut_len = 23;
 
     translate([0, 0, total_h - cut_vert_dist]) {
@@ -62,7 +51,7 @@ module cuts() {
                             cylinder(depth + 2, d = cut_width, center = true);
                         }
                     }
-                    l2 = total_h - 2 * cut_vert_dist - cut_len - wall_thickness - 2 * cut_width - penny_stack_h + 0.5;
+                    l2 = total_h - 2 * cut_vert_dist - cut_len - 2 * cut_width - cut_bottom_h;
                     translate([0, cut_len + cut_vert_dist + cut_width, 0]) {
                         hull() {
                             cylinder(depth + 2, d = cut_width, center = true);
@@ -77,31 +66,28 @@ module cuts() {
     }
 }
 
+
+divider_width = width - wall_thickness;
+
+
+
+                // linear_extrude(divider_width){
+                //     translate([-wall_thickness/2, 0]) {
+                //         square([wall_thickness, sponge_lip_height - wall_thickness/2]);
+                //     }
+                //     translate([0, sponge_lip_height - wall_thickness/2]) {
+                //         circle(wall_thickness/2);
+                //     }
+                // }
+
 module holder() {
+    divider_width = width - wall_thickness;
     translate([0, 0, sponge_holder_dish_h]) {
-        reflect([1, 0, 0]) {
-            translate([-corner_r + depth/2, adjusted_width/2]) {
-                rotate([90, 0, 0]) {
-                    linear_extrude(adjusted_width) {
-                        part();
-                    }
-                }
-            }
-            reflect([0, 1, 0]) {
-                translate([depth/2 - corner_r, adjusted_width/2]) corner();
-            }
-        }
-        reflect([0, 1, 0]) {
-            translate([-adjusted_depth/2, -corner_r + width/2]) {
-                rotate([90, 0, 90]) {
-                    linear_extrude(adjusted_depth) {
-                        part();
-                    }
-                }
-            }
-        }
+        boxify()
+            holder_2d();
         translate([sponge_1_depth - sponge_2_depth, divider_width/2, corner_r]) {
             rotate([90, 0, 0]) {
+                // Use tombstone
                 linear_extrude(divider_width){
                     translate([-wall_thickness/2, 0]) {
                         square([wall_thickness, sponge_lip_height - wall_thickness/2]);
@@ -112,56 +98,28 @@ module holder() {
                 }
             }
         }
+        translate([wall_thickness/2, divider_width/2, corner_r])
+            rotate([0, -90, 90])
+                tombstone([sponge_lip_height - wall_thickness/2, wall_thickness, divider_width]);
     }
-    translate([-adjusted_depth/2, -adjusted_width/2]) {
-        cube([adjusted_depth, adjusted_width, corner_r + 2 * bottom_corner_r + sponge_holder_dish_h]);
+    difference() {
+        translate([-adjusted_depth/2, -adjusted_width/2]) {
+            cube([adjusted_depth, adjusted_width, corner_r + 2 * bottom_corner_r + sponge_holder_dish_h]);
+        }
+        void_depth = adjusted_depth - 2 * wall_thickness;
+        void_width = adjusted_width - 2 * wall_thickness;
+        translate([-void_depth/2, -void_width/2, bottom_void_height_offset]) {
+            cube([void_depth, void_width, cut_bottom_h - 2 * bottom_void_height_offset]);
+        }
     }
-}
-
-module corner() {
-    rotate_extrude(angle = 90)
-        part();
 }
 
 module dish() {
-    reflect([1, 0, 0]) {
-        translate([0, adjusted_width/2]) {
-            rotate([90, 0, 0]) {
-                linear_extrude(adjusted_width) {
-                    dish_part();
-                }
-            }
-        }
-        reflect([0, 1, 0]) {
-            translate([depth/2 - corner_r, adjusted_width/2]) dish_corner();
-        }
-    }
-    reflect([0, 1, 0]) {
-        translate([-adjusted_depth/2, -depth/2 + width/2]) {
-            rotate([90, 0, 90]) {
-                linear_extrude(adjusted_depth) {
-                    dish_part();
-                }
-            }
-        }
-    }
+    boxify()
+        dish_2d();
 }
 
-module dish_corner() {
-    rotate_extrude(angle = 90) {
-        translate([-depth/2 + corner_r, 0]) dish_part();
-    }
-}
-
-dish_2d();
-
-module dish_2d() {
-    dish_part();
-    translate([0, sponge_holder_dish_h])
-        part();
-}
-
-module part() {
+module holder_2d() {
     translate([-wall_thickness + corner_r, bottom_corner_r + corner_r]) {
         square([wall_thickness, sponge_lip_height - bottom_corner_r - wall_thickness/2]);
     }
@@ -176,7 +134,7 @@ module part() {
     }
 }
 
-module dish_part() {
+module dish_2d() {
     translate([0, 0]) {
         intersection() {
             translate([-depth/2 + corner_r, 0]) {
@@ -193,7 +151,34 @@ module dish_part() {
                     }
                 }
             }
+            // Remove need for this intersect
             square([1000, 1000]);
+        }
+    }
+}
+
+module boxify() {
+    reflect([1, 0, 0]) {
+        translate([adjusted_depth/2, adjusted_width/2]) {
+            rotate([90, 0, 0]) {
+                linear_extrude(adjusted_width) {
+                    children();
+                }
+            }
+        }
+        reflect([0, 1, 0]) {
+            translate([depth/2 - corner_r, adjusted_width/2])
+                rotate_extrude(angle = 90)
+                    children();
+        }
+    }
+    reflect([0, 1, 0]) {
+        translate([-adjusted_depth/2, width/2 - corner_r]) {
+            rotate([90, 0, 90]) {
+                linear_extrude(adjusted_depth) {
+                    children();
+                }
+            }
         }
     }
 }
