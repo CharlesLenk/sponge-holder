@@ -3,30 +3,33 @@ use <openscad-utilities/row layout.scad>
 
 sponge_1_depth = 24;
 sponge_2_depth = 20;
-sponge_width = 0;
-sponge_length = 0;
+sponge_width = 89;
+sponge_length = 100;
 
 wall_thickness = 2.5;
-
 depth = sponge_1_depth + sponge_2_depth + 3 * wall_thickness;
-width = 94;
-sponge_lip_height = 70;
+width = sponge_width + 2 * wall_thickness;
+sponge_lip_height = 0.7 * sponge_length;
 
 corner_r = 10;
 adjusted_width = width - 2 * corner_r;
 adjusted_depth = depth - 2 * corner_r;
 
+sponge_base_offset = wall_thickness + 5;
+
 dish_lip_height = wall_thickness + 10;
 sponge_holder_dish_h = dish_lip_height - 7;
-cut_bottom_h = dish_lip_height - 1;
+cut_bottom_h = dish_lip_height - 1.5;
 
-bottom_corner_r = 1.5;
+bottom_corner_r = wall_thickness/2;
 
-total_h = sponge_holder_dish_h + sponge_lip_height + corner_r;
+total_h = sponge_base_offset + corner_r + sponge_lip_height;
 
 bottom_void_height_offset = 1.5;
 
 sponge_holder();
+
+//holder_2d();
 
 module sponge_holder() {
     dish();
@@ -82,29 +85,30 @@ divider_width = width - wall_thickness;
 
 module holder() {
     divider_width = width - wall_thickness;
-    translate([0, 0, sponge_holder_dish_h]) {
+    translate([0, divider_width/2, sponge_base_offset + corner_r])
+        rotate([0, -90, 90])
+            tombstone([sponge_lip_height, wall_thickness, divider_width]);
+    translate([0, 0, sponge_base_offset]) {
         boxify()
             holder_2d();
-        translate([sponge_1_depth - sponge_2_depth, divider_width/2, corner_r]) {
-            rotate([90, 0, 0]) {
-                // Use tombstone
-                linear_extrude(divider_width){
-                    translate([-wall_thickness/2, 0]) {
-                        square([wall_thickness, sponge_lip_height - wall_thickness/2]);
-                    }
-                    translate([0, sponge_lip_height - wall_thickness/2]) {
-                        circle(wall_thickness/2);
-                    }
-                }
-            }
-        }
-        translate([wall_thickness/2, divider_width/2, corner_r])
-            rotate([0, -90, 90])
-                tombstone([sponge_lip_height - wall_thickness/2, wall_thickness, divider_width]);
+        // translate([sponge_1_depth - sponge_2_depth, divider_width/2, corner_r]) {
+        //     rotate([90, 0, 0]) {
+        //         // Use tombstone
+        //         linear_extrude(divider_width){
+        //             translate([-wall_thickness/2, 0]) {
+        //                 square([wall_thickness, sponge_lip_height - wall_thickness/2]);
+        //             }
+        //             translate([0, sponge_lip_height - wall_thickness/2]) {
+        //                 circle(wall_thickness/2);
+        //             }
+        //         }
+        //     }
+        // }
+
     }
     difference() {
         translate([-adjusted_depth/2, -adjusted_width/2]) {
-            cube([adjusted_depth, adjusted_width, corner_r + 2 * bottom_corner_r + sponge_holder_dish_h]);
+            cube([adjusted_depth, adjusted_width, sponge_base_offset + corner_r]);
         }
         void_depth = adjusted_depth - 2 * wall_thickness;
         void_width = adjusted_width - 2 * wall_thickness;
@@ -120,40 +124,30 @@ module dish() {
 }
 
 module holder_2d() {
-    translate([-wall_thickness + corner_r, bottom_corner_r + corner_r]) {
-        square([wall_thickness, sponge_lip_height - bottom_corner_r - wall_thickness/2]);
+    translate([-wall_thickness + corner_r, corner_r]) {
+        square([wall_thickness, sponge_lip_height - wall_thickness/2]);
     }
     translate([-wall_thickness/2 + corner_r, sponge_lip_height + corner_r - wall_thickness/2]) {
         circle(wall_thickness/2);
     }
     hull() {
-        translate([-bottom_corner_r + corner_r, bottom_corner_r + corner_r]) {
-            circle(bottom_corner_r);
-        }
-        square([0.001, corner_r + 2 * bottom_corner_r]);
+        translate([-wall_thickness/2 + corner_r, corner_r])
+            rotate(180)
+                pie_wedge_2d(wall_thickness/2, 180);
+        square([0.001, corner_r]);
     }
 }
 
 module dish_2d() {
-    translate([0, 0]) {
-        intersection() {
-            translate([-depth/2 + corner_r, 0]) {
-                union() {
-                    square([depth/2 - bottom_corner_r, wall_thickness]);
-                    translate([depth/2 - bottom_corner_r, bottom_corner_r]) {
-                        circle(bottom_corner_r);
-                    }
-                    translate([depth/2 - wall_thickness, bottom_corner_r]) {
-                        square([wall_thickness, dish_lip_height - bottom_corner_r - wall_thickness/2]);
-                    }
-                    translate([depth/2 - wall_thickness/2, dish_lip_height - wall_thickness/2]) {
-                        circle(wall_thickness/2);
-                    }
-                }
-            }
-            // Remove need for this intersect
-            square([1000, 1000]);
-        }
+    square([corner_r - bottom_corner_r, wall_thickness]);
+    translate([corner_r - bottom_corner_r, bottom_corner_r]) {
+        circle(bottom_corner_r);
+    }
+    translate([corner_r - wall_thickness, bottom_corner_r]) {
+        square([wall_thickness, dish_lip_height - bottom_corner_r - wall_thickness/2]);
+    }
+    translate([corner_r - wall_thickness/2, dish_lip_height - wall_thickness/2]) {
+        circle(wall_thickness/2);
     }
 }
 
