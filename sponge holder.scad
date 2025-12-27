@@ -1,35 +1,27 @@
 include <openscad-utilities/common.scad>
 use <openscad-utilities/row layout.scad>
 
-sponge_1_depth = 24;
-sponge_2_depth = 20;
-sponge_width = 89;
-sponge_length = 100;
+sponge_1_depth = 25;
+sponge_2_depth = 18;
+sponge_width = 88;
+sponge_length = 137;
 
 wall_thickness = 2.5;
 depth = sponge_1_depth + sponge_2_depth + 3 * wall_thickness;
 width = sponge_width + 2 * wall_thickness;
-sponge_lip_height = 0.7 * sponge_length;
+sponge_lip_height = 0.6 * sponge_length;
 
 corner_r = 10;
 adjusted_width = width - 2 * corner_r;
 adjusted_depth = depth - 2 * corner_r;
 
 sponge_base_offset = wall_thickness + 5;
-
-dish_lip_height = wall_thickness + 10;
-sponge_holder_dish_h = dish_lip_height - 7;
-cut_bottom_h = dish_lip_height - 1.5;
-
-bottom_corner_r = wall_thickness/2;
-
 total_h = sponge_base_offset + corner_r + sponge_lip_height;
 
-bottom_void_height_offset = 1.5;
+dish_lip_height = wall_thickness + 10;
+cut_bottom_h = dish_lip_height - 1.5;
 
 sponge_holder();
-
-//holder_2d();
 
 module sponge_holder() {
     dish();
@@ -42,7 +34,7 @@ module sponge_holder() {
 module cuts() {
     cut_width = 5;
     cut_vert_dist = 7;
-    cut_len = 23;
+    cut_len = (total_h - dish_lip_height - 3 * cut_vert_dist)/2;
 
     translate([0, 0, total_h - cut_vert_dist]) {
         rotate([270, 0, 90]) {
@@ -69,42 +61,14 @@ module cuts() {
     }
 }
 
-
-divider_width = width - wall_thickness;
-
-
-
-                // linear_extrude(divider_width){
-                //     translate([-wall_thickness/2, 0]) {
-                //         square([wall_thickness, sponge_lip_height - wall_thickness/2]);
-                //     }
-                //     translate([0, sponge_lip_height - wall_thickness/2]) {
-                //         circle(wall_thickness/2);
-                //     }
-                // }
-
 module holder() {
     divider_width = width - wall_thickness;
-    translate([0, divider_width/2, sponge_base_offset + corner_r])
+    translate([depth/2 - wall_thickness - sponge_1_depth, divider_width/2, sponge_base_offset + corner_r])
         rotate([0, -90, 90])
             tombstone([sponge_lip_height, wall_thickness, divider_width]);
     translate([0, 0, sponge_base_offset]) {
         boxify()
             holder_2d();
-        // translate([sponge_1_depth - sponge_2_depth, divider_width/2, corner_r]) {
-        //     rotate([90, 0, 0]) {
-        //         // Use tombstone
-        //         linear_extrude(divider_width){
-        //             translate([-wall_thickness/2, 0]) {
-        //                 square([wall_thickness, sponge_lip_height - wall_thickness/2]);
-        //             }
-        //             translate([0, sponge_lip_height - wall_thickness/2]) {
-        //                 circle(wall_thickness/2);
-        //             }
-        //         }
-        //     }
-        // }
-
     }
     difference() {
         translate([-adjusted_depth/2, -adjusted_width/2]) {
@@ -112,6 +76,7 @@ module holder() {
         }
         void_depth = adjusted_depth - 2 * wall_thickness;
         void_width = adjusted_width - 2 * wall_thickness;
+        bottom_void_height_offset = 1.5;
         translate([-void_depth/2, -void_width/2, bottom_void_height_offset]) {
             cube([void_depth, void_width, cut_bottom_h - 2 * bottom_void_height_offset]);
         }
@@ -139,12 +104,12 @@ module holder_2d() {
 }
 
 module dish_2d() {
-    square([corner_r - bottom_corner_r, wall_thickness]);
-    translate([corner_r - bottom_corner_r, bottom_corner_r]) {
-        circle(bottom_corner_r);
+    square([corner_r - wall_thickness/2, wall_thickness]);
+    translate([corner_r - wall_thickness/2, wall_thickness/2]) {
+        circle(wall_thickness/2);
     }
-    translate([corner_r - wall_thickness, bottom_corner_r]) {
-        square([wall_thickness, dish_lip_height - bottom_corner_r - wall_thickness/2]);
+    translate([corner_r - wall_thickness, wall_thickness/2]) {
+        square([wall_thickness, dish_lip_height - wall_thickness/2 - wall_thickness/2]);
     }
     translate([corner_r - wall_thickness/2, dish_lip_height - wall_thickness/2]) {
         circle(wall_thickness/2);
