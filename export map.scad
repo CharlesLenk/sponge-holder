@@ -4,4 +4,5 @@ use <sponge holder.scad>
 name = "";
 
 if (name == "sponge_holder")
-    sponge_holder();
+    rotate(90)
+        sponge_holder();

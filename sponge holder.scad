@@ -1,18 +1,21 @@
 include <openscad-utilities/common.scad>
 use <openscad-utilities/row layout.scad>
 
-sponge_1_depth = 25;
-sponge_2_depth = 18;
+sponge_1_depth = 24;
+sponge_2_depth = 24;
 sponge_width = 88;
 sponge_length = 137;
 
+
 wall_thickness = 2.5;
 depth = sponge_1_depth + sponge_2_depth + 3 * wall_thickness;
-width = sponge_width + 2 * wall_thickness;
-sponge_lip_height = 0.6 * sponge_length;
 
+sponge_lip_height = 80;//0.6 * sponge_length; (82.2)
 corner_r = 10;
-adjusted_width = width - 2 * corner_r;
+void_width = 72;//adjusted_width - 2 * wall_thickness;
+width = void_width + 2 * wall_thickness + 2 * corner_r;
+echo(width);
+adjusted_width = void_width + 2 * wall_thickness;//width - 2 * corner_r;
 adjusted_depth = depth - 2 * corner_r;
 
 sponge_base_offset = wall_thickness + 5;
@@ -75,10 +78,12 @@ module holder() {
             cube([adjusted_depth, adjusted_width, sponge_base_offset + corner_r]);
         }
         void_depth = adjusted_depth - 2 * wall_thickness;
-        void_width = adjusted_width - 2 * wall_thickness;
+        //void_width = adjusted_width - 2 * wall_thickness;
         bottom_void_height_offset = 1.5;
+        void_height = cut_bottom_h - 2 * bottom_void_height_offset;
+        echo(str("\nvoid_depth=", void_depth, "\nvoid_width=", void_width, "\nvoid_height=", void_height, "\n"));
         translate([-void_depth/2, -void_width/2, bottom_void_height_offset]) {
-            cube([void_depth, void_width, cut_bottom_h - 2 * bottom_void_height_offset]);
+            cube([void_depth, void_width, void_height]);
         }
     }
 }
