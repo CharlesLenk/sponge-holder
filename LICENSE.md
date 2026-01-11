@@ -1,9 +1,9 @@
 # License
 
-This project is licensed under permissive terms. In general, these licenses will allow you to use the project as you wish as long as appropriate attribution is given. For details on what specifically is or isn't allowed, please consult the licenses below.
+* Code in this repository is licensed under the [MIT License](LICENSE.md#mit-license).
+* Media in this repository, including 3D models defined by and generated using the included code, are licensed under [CC BY 4.0](LICENSE.md#cc-by-40)
 
-* Code in this repository is licensed under the [MIT License](#mit-license).
-* Media in this repository, including 3D models defined by and generated using the included code, are licensed under [CC BY 4.0](#cc-by-40)
+In general, these licenses allow permissive use of the project, including creating copies, derivative works, and selling prints as long as appropriate attribution is given. Attribution should be made to `Charles Alden Lenk`.
 
 ### MIT License
 
@@ -38,8 +38,6 @@ This project is licensed under permissive terms. In general, these licenses will
 <details>
 
 <summary>Expand for license details</summary>
-
-    Copyright (c) 2025 Charles Alden Lenk
 
     Creative Commons Attribution 4.0 International Public License
 
@@ -358,27 +356,5 @@ This project is licensed under permissive terms. In general, these licenses will
         as a limitation upon, or waiver of, any privileges and immunities
         that apply to the Licensor or You, including from the legal
         processes of any jurisdiction or authority.
-
-
-    =======================================================================
-
-    Creative Commons is not a party to its public
-    licenses. Notwithstanding, Creative Commons may elect to apply one of
-    its public licenses to material it publishes and in those instances
-    will be considered the “Licensor.” The text of the Creative Commons
-    public licenses is dedicated to the public domain under the CC0 Public
-    Domain Dedication. Except for the limited purpose of indicating that
-    material is shared under a Creative Commons public license or as
-    otherwise permitted by the Creative Commons policies published at
-    creativecommons.org/policies, Creative Commons does not authorize the
-    use of the trademark "Creative Commons" or any other trademark or logo
-    of Creative Commons without its prior written consent including,
-    without limitation, in connection with any unauthorized modifications
-    to any of its public licenses or any other arrangements,
-    understandings, or agreements concerning use of licensed material. For
-    the avoidance of doubt, this paragraph does not form part of the
-    public licenses.
-
-    Creative Commons may be contacted at creativecommons.org.
 
 <details>

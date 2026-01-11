@@ -1,26 +1,51 @@
 include <openscad-utilities/common.scad>
 use <openscad-utilities/row layout.scad>
 
+// The interior depth of each sponge slot
 sponge_slot_1_depth = 24;
 sponge_slot_2_depth = sponge_slot_1_depth;
+// The interior height of the sponge slots
+sponge_slot_height = 80;
 
+// The thickness of the walls
 wall_thickness = 2.5;
-sponge_lip_height = 80;
+// The radius of the corners
 corner_r = 10;
 
-void_width = 72;
-sponge_base_offset = wall_thickness + 5;
-dish_lip_height = wall_thickness + 10;
-cut_bottom_h = dish_lip_height - 1.5;
+// Height of the weight void
+void_height = 8.5;
+// The z dimension wall width of the bottom void
+bottom_void_z_wall_width = 1.5;
+// Sponge slot high offset from dish bottom
+sponge_base_offset = void_height + 2 * bottom_void_z_wall_width + 7;
+// The bottom of the drying cut
+cut_bottom_h = void_height + 2 * bottom_void_z_wall_width;
+// Drip dish wall heigh. Overlaps the cut so water drains into the dish
+dish_lip_height = cut_bottom_h + 2;
 
+// Width of the weight void. The width of the holder is based on this number
+void_width = 72;
+// The height, width, and depth of the holder itself
+holder_height = sponge_base_offset + sponge_slot_height;
 holder_width = void_width + 2 * wall_thickness + 2 * corner_r;
 holder_depth = sponge_slot_1_depth + sponge_slot_2_depth + 3 * wall_thickness;
-holder_height = sponge_base_offset + corner_r + sponge_lip_height;
 
-adjusted_width = holder_width - 2 * corner_r;
-adjusted_depth = holder_depth - 2 * corner_r;
+// Interior sizes for lining up parts
+interior_width = holder_width - 2 * corner_r;
+interior_depth = holder_depth - 2 * corner_r;
+
+// Depth of the weight void
+void_depth = interior_depth - 2 * wall_thickness;
 
 sponge_holder();
+
+echo_values([
+    ["sponge_slot_height", sponge_slot_height],
+    ["sponge_slot_width", holder_width - 2 * wall_thickness],
+    ["sponge_slot_depth", sponge_slot_1_depth]
+]);
+echo_values([["holder_height", holder_height], ["holder_width", holder_width], ["holder_depth", holder_depth]]);
+echo_values([["void_height", void_height], ["void_width", void_width], ["void_depth", void_depth]]);
 
 module sponge_holder() {
     dish();
@@ -37,8 +62,8 @@ module cuts() {
 
     translate([0, 0, holder_height - cut_vert_dist]) {
         rotate([270, 0, 90]) {
-            translate([-adjusted_width/2 + cut_width/2, cut_width/2]) {
-                row_layout(total_width = adjusted_width, part_width = cut_width, min_space_width = cut_vert_dist, mode = 2) {
+            translate([-interior_width/2 + cut_width/2, cut_width/2]) {
+                row_layout(total_width = interior_width, part_width = cut_width, min_space_width = cut_vert_dist, mode = 2) {
                     hull() {
                         cylinder(holder_depth + 2, d = cut_width, center = true);
                         translate([0, cut_len]) {
@@ -62,22 +87,18 @@ module cuts() {
 
 module holder() {
     divider_width = holder_width - wall_thickness;
-    translate([holder_depth/2 - wall_thickness - sponge_slot_1_depth, divider_width/2, sponge_base_offset + corner_r])
+    translate([holder_depth/2 - wall_thickness - sponge_slot_1_depth, divider_width/2, sponge_base_offset])
         rotate([0, -90, 90])
-            tombstone([sponge_lip_height, wall_thickness, divider_width]);
-    translate([0, 0, sponge_base_offset]) {
+            tombstone([sponge_slot_height, wall_thickness, divider_width]);
+    translate([0, 0, -corner_r + sponge_base_offset]) {
         boxify()
             holder_2d();
     }
     difference() {
-        translate([-adjusted_depth/2, -adjusted_width/2]) {
-            cube([adjusted_depth, adjusted_width, sponge_base_offset + corner_r]);
+        translate([-interior_depth/2, -interior_width/2]) {
+            cube([interior_depth, interior_width, sponge_base_offset]);
         }
-        void_depth = adjusted_depth - 2 * wall_thickness;
-        bottom_void_height_offset = 1.5;
-        void_height = cut_bottom_h - 2 * bottom_void_height_offset;
-        echo(str("\nvoid_depth=", void_depth, "\nvoid_width=", void_width, "\nvoid_height=", void_height, "\n"));
-        translate([-void_depth/2, -void_width/2, bottom_void_height_offset]) {
+        translate([-void_depth/2, -void_width/2, bottom_void_z_wall_width]) {
             cube([void_depth, void_width, void_height]);
         }
     }
@@ -90,9 +111,9 @@ module dish() {
 
 module holder_2d() {
     translate([-wall_thickness + corner_r, corner_r]) {
-        square([wall_thickness, sponge_lip_height - wall_thickness/2]);
+        square([wall_thickness, sponge_slot_height - wall_thickness/2]);
     }
-    translate([-wall_thickness/2 + corner_r, sponge_lip_height + corner_r - wall_thickness/2]) {
+    translate([-wall_thickness/2 + corner_r, sponge_slot_height + corner_r - wall_thickness/2]) {
         circle(wall_thickness/2);
     }
     hull() {
@@ -118,23 +139,23 @@ module dish_2d() {
 
 module boxify() {
     reflect([1, 0, 0]) {
-        translate([adjusted_depth/2, adjusted_width/2]) {
+        translate([interior_depth/2, interior_width/2]) {
             rotate([90, 0, 0]) {
-                linear_extrude(adjusted_width) {
+                linear_extrude(interior_width) {
                     children();
                 }
             }
         }
         reflect([0, 1, 0]) {
-            translate([holder_depth/2 - corner_r, adjusted_width/2])
+            translate([holder_depth/2 - corner_r, interior_width/2])
                 rotate_extrude(angle = 90)
                     children();
         }
     }
     reflect([0, 1, 0]) {
-        translate([-adjusted_depth/2, holder_width/2 - corner_r]) {
+        translate([-interior_depth/2, holder_width/2 - corner_r]) {
             rotate([90, 0, 90]) {
-                linear_extrude(adjusted_depth) {
+                linear_extrude(interior_depth) {
                     children();
                 }
             }
