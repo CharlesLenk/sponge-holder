@@ -13,11 +13,11 @@ wall_thickness = 2.5;
 corner_r = 10;
 
 // Height of the weight void
-void_height = 8.5;
+void_height = 8;
 // The z dimension wall width of the bottom void
 bottom_void_z_wall_width = 1.5;
 // Sponge slot high offset from dish bottom
-sponge_base_offset = void_height + 2 * bottom_void_z_wall_width + 7;
+sponge_base_offset = void_height + 2 * bottom_void_z_wall_width + 6;
 // The bottom of the drying cut
 cut_bottom_h = void_height + 2 * bottom_void_z_wall_width;
 // Drip dish wall heigh. Overlaps the cut so water drains into the dish

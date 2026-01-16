@@ -25,8 +25,8 @@ During this pause, place the weights you plan to use inside the print, then resu
 # Dimensions
 
 - The sponge slot interior is `80mm` x `92mm` x `24mm` (H x W x D).
-- The holder itself is `98.5mm` x `97mm` x `55.5mm` (H x W x D).
-- The bottom void for weights is `8.5mm` x `72mm` x `30.5mm` (H x W x D).
+- The holder itself is `97mm` x `97mm` x `55.5mm` (H x W x D).
+- The bottom void for weights is `8mm` x `72mm` x `30.5mm` (H x W x D).
 
 # Project Setup
 
