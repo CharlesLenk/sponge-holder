@@ -2,9 +2,10 @@
 
 This is a sponge holder for two standard kitchen sponges. Cutouts aid in drying the sponge, and an integrated dish catches drips. The model has a void in the based so weights can be added while printing to help prevent tipping.
 
+![](images/with_sponges.jpg)
 |||
 |-|-|
-|![](images/image.jpg)|![](images/image.jpg)|
+|![](images/print.jpg)|![](images/print_bottom.jpg)|
 
 # Printing
 
