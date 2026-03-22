@@ -1,13 +1,13 @@
 # Sponge Holder
 
-This is a sponge holder for two standard kitchen sponges. Cutouts aid in drying the sponge, and an integrated dish catches drips. The model has a void in the based so weights can be added while printing to help prevent tipping.
+A sponge holder for kitchen sponges. Can hold two standard sized foam and silicone sponges. Cutouts aid in drying the sponge, and an integrated dish catches drips. The model has a void in the based so weights can be added while printing to help prevent tipping.
 
 ![](images/with_sponges.jpg)
 |||
 |-|-|
 |![](images/print.jpg)|![](images/print_bottom.jpg)|
 
-# Printing
+## Printing
 
 This model is designed to be printed on a standard consumer grade FDM printer with a 0.4mm nozzle. Any standard filament can be used, but PLA is recommended because it's low cost and handles overhangs well.
 
@@ -17,19 +17,19 @@ If you want to add weight when printing this model, add a pause step before befo
 
 During this pause, place the weights you plan to use inside the print, then resume. Wheel weights for cars are an inexpensive option.
 
-# Models in this Project
-
-|Image|Name|File|Description|
-|-|-|-|-|
-|![](images/holder_model.png)|`Sponge Holder`|`sponge holder.scad`|The sponge holder.|
-
-# Dimensions
+## Dimensions
 
 - The sponge slot interior is `80mm` x `92mm` x `24mm` (H x W x D).
 - The holder itself is `97mm` x `97mm` x `55.5mm` (H x W x D).
 - The bottom void for weights is `8mm` x `72mm` x `30.5mm` (H x W x D).
 
-# Project Setup
+## Models in this Project
+
+|Image|Name|File|Description|
+|-|-|-|-|
+|![](images/holder_model.png)|`Sponge Holder`|`sponge holder.scad`|The sponge holder.|
+
+# Project Setup for Local Editing
 
 Everything below this point is only relevant if you want to download this project and make edits.
 
